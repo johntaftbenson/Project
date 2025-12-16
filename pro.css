@@ -1,0 +1,25 @@
+:root{
+  --pro:#0b2a4a;
+}
+
+.bg-pro{ background: var(--pro); }
+
+.hero-pro{
+  background: linear-gradient(135deg, #f5f7fb, #ffffff);
+}
+
+.btn-primary{
+  background: var(--pro);
+  border-color: var(--pro);
+}
+
+.btn-outline-primary{
+  border-color: var(--pro);
+  color: var(--pro);
+}
+.btn-outline-primary:hover{
+  background: var(--pro);
+  color: #fff;
+}
+
+.card{ border: 1px solid #e8edf5; }

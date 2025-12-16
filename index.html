@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basketball Scratch Page | John Benson</title>
+  <link rel="stylesheet" href="scratch.css" />
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <div class="topbar">
+    <div class="brand">BYU Hoops Scratch</div>
+    <div class="navlinks">
+      <a href="#mj">Jump to MJ Stats</a>
+      <a href="wordle.html">Basketball Wordle App</a>
+      <a href="professional.html">Professional Site</a>
+    </div>
+  </div>
+
+  <!-- HERO (DIV #1) -->
+  <div class="hero">
+    <div class="hero-left">
+      <h1>Basketball. BYU. Highlights.</h1>
+
+
+      <div class="cta-row">
+        <a class="btn" href="#highlights">Watch Highlights</a>
+        <a class="btn-outline" href="#mj">See MJ Tableau</a>
+      </div>
+
+      <!-- Ordered list with unordered list inside (requirement) -->
+      <h2 class="section-title">My Basketball Checklist</h2>
+      <ol class="clean-list">
+        <li>
+          Game day essentials
+          <ul>
+            <li>Jersey</li>
+            <li>Good shoes</li>
+            <li>Hydration</li>
+          </ul>
+        </li>
+        <li>
+          BYU vibes
+          <ul>
+            <li>Marriott Center energy</li>
+            <li>Defense chants</li>
+            <li>Big shots late</li>
+          </ul>
+        </li>
+        <li>
+          GOAT debate
+          <ul>
+            <li>Jordan is the greatest of all time.</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+
+    <div class="hero-right">
+      <img class="photo" src="./Images /IMG_1053.jpeg" alt="Me with Cosmo the Cougar" />
+      <p class="caption">Me + Cosmo the Cougar (BYU game day).</p>
+    </div>
+  </div>
+
+  <!-- Highlights (DIV #2) -->
+  <div class="block" id="highlights">
+    <h2>BYU Basketball Game Highlights</h2>
+
+    <div class="video-wrap">
+      <!-- Your embed code, responsive wrapper handles sizing -->
+      <iframe src="https://www.youtube.com/embed/i_g7dKXw0ds?si=D7cjGdGAvgBfC5HE"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- MJ Tableau (DIV #3) -->
+  <div class="block" id="mj">
+    <h2>Michael Jordan: Career Scoring (Interactive Tableau)</h2>
+    <p>This is a live, interactive embedded Tableau viz (not a screenshot).</p>
+
+    <!-- Your Tableau embed code (kept intact) -->
+    <div class='tableauPlaceholder' id='viz1765853750249' style='position: relative'>
+      <noscript>
+        <a href='#'>
+          <img alt='PlayerViz ' src='https://public.tableau.com/static/images/Jo/JordanCareerScoring/PlayerViz/1_rss.png' style='border: none' />
+        </a>
+      </noscript>
+      <object class='tableauViz' style='display:none;'>
+        <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+        <param name='embed_code_version' value='3' />
+        <param name='site_root' value='' />
+        <param name='name' value='JordanCareerScoring/PlayerViz' />
+        <param name='tabs' value='no' />
+        <param name='toolbar' value='yes' />
+        <param name='static_image' value='https://public.tableau.com/static/images/Jo/JordanCareerScoring/PlayerViz/1.png' />
+        <param name='animate_transition' value='yes' />
+        <param name='display_static_image' value='yes' />
+        <param name='display_spinner' value='yes' />
+        <param name='display_overlay' value='yes' />
+        <param name='display_count' value='yes' />
+        <param name='language' value='en-US' />
+      </object>
+    </div>
+
+    <script type='text/javascript'>
+      var divElement = document.getElementById('viz1765853750249');
+      var vizElement = divElement.getElementsByTagName('object')[0];
+      vizElement.style.width = '100%';
+      vizElement.style.height = '850px';
+      var scriptElement = document.createElement('script');
+      scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+      vizElement.parentNode.insertBefore(scriptElement, vizElement);
+    </script>
+
+    <div class="mini-nav">
+      <a href="#top" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;">Back to top</a>
+      <span>•</span>
+      <a href="professional/index.html">Go to Professional Pages</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Scratch Page • BYU Blue & White • Built from scratch HTML/CSS</p>
+  </div>
+
+</body>
+</html>

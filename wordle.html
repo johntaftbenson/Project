@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hoops Wordle</title>
+<style>
+  :root{
+    --bg:#0b1220;
+    --panel:#0f1a33;
+    --text:#eaf0ff;
+    --muted:#9bb1d6;
+    --line:#1b2a52;
+
+    --good:#2ecc71;
+    --near:#f1c40f;
+    --bad:#2b3a63;
+
+    --accent:#ff2d55; /* ESPN-ish pop */
+  }
+  body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: radial-gradient(1200px 600px at 20% 0%, #14224a, var(--bg));
+    color: var(--text);
+  }
+  header{
+    border-bottom: 1px solid var(--line);
+    background: rgba(15,26,51,.9);
+    backdrop-filter: blur(6px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .bar{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+  }
+  .logo{
+    display:flex; gap:10px; align-items:center;
+    font-weight: 900;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+  }
+  .pill{
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+  a{
+    color: var(--text);
+    text-decoration:none;
+    font-weight: 700;
+  }
+  a:hover{ text-decoration:underline; }
+
+  main{
+    max-width: 980px;
+    margin: 18px auto 40px;
+    padding: 0 16px;
+    display:grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 18px;
+  }
+  .card{
+    background: rgba(15,26,51,.92);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    padding: 16px;
+  }
+  h1{
+    margin: 0 0 6px;
+    font-size: 22px;
+  }
+  p{ margin: 0 0 10px; color: var(--muted); line-height: 1.4; }
+
+  /* board */
+  .board{
+    display:grid;
+    grid-template-rows: repeat(6, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .row{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  .cell{
+    height: 56px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 22px;
+    font-weight: 900;
+    background: rgba(11,18,32,.65);
+    text-transform: uppercase;
+    user-select:none;
+  }
+
+  /* key colors */
+  .good{ background: rgba(46, 204, 113, .25); border-color: rgba(46,204,113,.5); }
+  .near{ background: rgba(241, 196, 15, .22); border-color: rgba(241,196,15,.5); }
+  .bad{ background: rgba(43, 58, 99, .9); border-color: rgba(43,58,99,1); }
+
+  .kbd{
+    display:grid;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .kbd-row{
+    display:flex;
+    gap: 8px;
+    justify-content:center;
+    flex-wrap: wrap;
+  }
+  button.key{
+    background: rgba(11,18,32,.8);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 10px 10px;
+    min-width: 38px;
+    font-weight: 900;
+    cursor:pointer;
+  }
+  button.key:hover{ outline: 2px solid rgba(255,45,85,.35); }
+  button.key.wide{ min-width: 76px; }
+
+  .status{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+  .msg{
+    font-weight: 800;
+    color: var(--text);
+  }
+  .tag{
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .accent{
+    color: var(--accent);
+    font-weight: 900;
+  }
+
+  .side h2{ margin: 0 0 8px; font-size: 16px; }
+  .rule{
+    border-left: 3px solid var(--accent);
+    padding-left: 10px;
+    margin: 10px 0;
+    color: var(--muted);
+  }
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    margin: 6px 6px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  @media (max-width: 900px){
+    main{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="logo">
+      <span class="accent">HOOPS</span> WORDLE
+      <span class="pill">NBA-style</span>
+    </div>
+    <div style="display:flex; gap:14px; align-items:center;">
+      <a href="index.html">Back to Scratch</a>
+      <a href="professional.html">Professional</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <h1>Guess the basketball word</h1>
+    <p>It’s always a <span class="accent">5-letter</span> hoops word. You get 6 tries.</p>
+
+    <div id="board" class="board" aria-label="Wordle board"></div>
+
+    <div class="kbd" aria-label="Keyboard">
+      <div class="kbd-row" id="kbd1"></div>
+      <div class="kbd-row" id="kbd2"></div>
+      <div class="kbd-row" id="kbd3"></div>
+    </div>
+
+    <div class="status">
+      <div>
+        <div class="msg" id="message">Type a guess…</div>
+        <div class="tag" id="submsg">Press Enter to submit. Backspace to delete.</div>
+      </div>
+      <button class="key wide" id="resetBtn" title="New game">New Game</button>
+    </div>
+  </section>
+
+  <aside class="card side">
+    <h2>How scoring works</h2>
+    <div class="rule"><b>Green</b> = right letter, right spot</div>
+    <div class="rule"><b>Yellow</b> = right letter, wrong spot</div>
+    <div class="rule"><b>Dark</b> = letter not in the word</div>
+
+    <h2>Basketball word bank</h2>
+    <div class="chip">dunks</div>
+    <div class="chip">hoops</div>
+    <div class="chip">court</div>
+    <div class="chip">swish</div>
+    <div class="chip">guard</div>
+    <div class="chip">rebound*</div>
+    <p style="margin-top:10px; color:var(--muted); font-size:12px;">
+      *Only 5-letter words are used each round (the bank shown here is just examples).
+    </p>
+  </aside>
+</main>
+
+<script>
+  // Basketball-themed 5-letter answers (all uppercase checked in code)
+  const WORDS = [
+    "DUNKS","HOOPS","COURT","SWISH","GUARD","SCORE","BLOCK","STEAL","DRIVE","FLOOR",
+    "PRESS","ZONES","PICKS","SCREW" // last one is a decoy; remove if you want
+  ].filter(w => w.length === 5);
+
+  // (Optional) allowed guesses — here we keep it simple and allow any A-Z 5 letters
+  const MAX_ROWS = 6, COLS = 5;
+
+  let answer = "";
+  let row = 0;
+  let col = 0;
+  let grid = Array.from({length: MAX_ROWS}, () => Array(COLS).fill(""));
+  let gameOver = false;
+
+  const boardEl = document.getElementById("board");
+  const msgEl = document.getElementById("message");
+  const subEl = document.getElementById("submsg");
+
+  function pickAnswer(){
+    answer = WORDS[Math.floor(Math.random() * WORDS.length)];
+  }
+
+  function buildBoard(){
+    boardEl.innerHTML = "";
+    for(let r=0; r<MAX_ROWS; r++){
+      const rowEl = document.createElement("div");
+      rowEl.className = "row";
+      for(let c=0; c<COLS; c++){
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.id = `cell-${r}-${c}`;
+        cell.textContent = grid[r][c];
+        rowEl.appendChild(cell);
+      }
+      boardEl.appendChild(rowEl);
+    }
+  }
+
+  const keyboard = [
+    ["Q","W","E","R","T","Y","U","I","O","P"],
+    ["A","S","D","F","G","H","J","K","L"],
+    ["ENTER","Z","X","C","V","B","N","M","⌫"]
+  ];
+
+  function buildKeyboard(){
+    const k1 = document.getElementById("kbd1");
+    const k2 = document.getElementById("kbd2");
+    const k3 = document.getElementById("kbd3");
+    [k1,k2,k3].forEach(k => k.innerHTML="");
+
+    keyboard[0].forEach(k => k1.appendChild(makeKey(k)));
+    keyboard[1].forEach(k => k2.appendChild(makeKey(k)));
+    keyboard[2].forEach(k => k3.appendChild(makeKey(k, k==="ENTER"||k==="⌫")));
+  }
+
+  function makeKey(label, wide=false){
+    const b = document.createElement("button");
+    b.className = "key" + (wide ? " wide" : "");
+    b.textContent = label;
+    b.addEventListener("click", () => handleKey(label));
+    b.id = `key-${label}`;
+    return b;
+  }
+
+  function setMessage(main, sub=""){
+    msgEl.textContent = main;
+    subEl.textContent = sub;
+  }
+
+  function handleKey(k){
+    if(gameOver) return;
+
+    if(k === "ENTER"){
+      submitGuess();
+      return;
+    }
+    if(k === "⌫"){
+      backspace();
+      return;
+    }
+    if(/^[A-Z]$/.test(k)){
+      typeLetter(k);
+    }
+  }
+
+  function typeLetter(letter){
+    if(col >= COLS) return;
+    grid[row][col] = letter;
+    document.getElementById(`cell-${row}-${col}`).textContent = letter;
+    col++;
+  }
+
+  function backspace(){
+    if(col <= 0) return;
+    col--;
+    grid[row][col] = "";
+    document.getElementById(`cell-${row}-${col}`).textContent = "";
+  }
+
+  function currentGuess(){
+    return grid[row].join("");
+  }
+
+  function submitGuess(){
+    if(col < COLS){
+      setMessage("Need 5 letters.", "Try a 5-letter basketball word.");
+      return;
+    }
+
+    const guess = currentGuess();
+
+    if(!/^[A-Z]{5}$/.test(guess)){
+      setMessage("Letters only.", "A–Z, 5 letters.");
+      return;
+    }
+
+    // score like Wordle
+    const ansArr = answer.split("");
+    const gArr = guess.split("");
+    const result = Array(COLS).fill("bad");
+
+    // greens
+    for(let i=0; i<COLS; i++){
+      if(gArr[i] === ansArr[i]){
+        result[i] = "good";
+        ansArr[i] = null; // consume
+        gArr[i] = null;
+      }
+    }
+    // yellows
+    for(let i=0; i<COLS; i++){
+      if(gArr[i] && ansArr.includes(gArr[i])){
+        result[i] = "near";
+        ansArr[ansArr.indexOf(gArr[i])] = null; // consume
+      }
+    }
+
+    // paint cells + keyboard
+    for(let i=0; i<COLS; i++){
+      const cell = document.getElementById(`cell-${row}-${i}`);
+      cell.classList.add(result[i]);
+      const keyBtn = document.getElementById(`key-${guess[i]}`);
+      if(keyBtn){
+        // upgrade priority: good > near > bad
+        if(result[i] === "good"){
+          keyBtn.classList.remove("near","bad");
+          keyBtn.classList.add("good");
+        }else if(result[i] === "near" && !keyBtn.classList.contains("good")){
+          keyBtn.classList.remove("bad");
+          keyBtn.classList.add("near");
+        }else if(result[i] === "bad" && !keyBtn.classList.contains("good") && !keyBtn.classList.contains("near")){
+          keyBtn.classList.add("bad");
+        }
+      }
+    }
+
+    if(guess === answer){
+      gameOver = true;
+      setMessage(`Buckets! You got it: ${answer}`, "Hit New Game to play again.");
+      return;
+    }
+
+    row++;
+    col = 0;
+
+    if(row >= MAX_ROWS){
+      gameOver = true;
+      setMessage(`Game over. Answer was: ${answer}`, "Hit New Game to try again.");
+    }else{
+      setMessage("Next guess…", "Enter a new 5-letter hoops word.");
+    }
+  }
+
+  function handlePhysicalKey(e){
+    if(gameOver) return;
+
+    const key = e.key.toUpperCase();
+    if(key === "BACKSPACE") handleKey("⌫");
+    else if(key === "ENTER") handleKey("ENTER");
+    else if(/^[A-Z]$/.test(key)) handleKey(key);
+  }
+
+  function newGame(){
+    row = 0; col = 0;
+    gameOver = false;
+    grid = Array.from({length: MAX_ROWS}, () => Array(COLS).fill(""));
+    pickAnswer();
+    buildBoard();
+    buildKeyboard();
+    setMessage("Type a guess…", "Press Enter to submit. Backspace to delete.");
+  }
+
+  document.getElementById("resetBtn").addEventListener("click", newGame);
+  window.addEventListener("keydown", handlePhysicalKey);
+
+  // start
+  newGame();
+</script>
+</body>
+</html>
